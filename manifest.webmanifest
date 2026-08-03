@@ -1,0 +1,15 @@
+{
+  "name": "Maktabah Hikmah",
+  "short_name": "Maktabah",
+  "description": "Perpustakaan Islam pribadi untuk membaca tafsir, doa, kisah, dan sejarah Al-Qur'an.",
+  "id": "./",
+  "start_url": "./",
+  "scope": "./",
+  "display": "standalone",
+  "orientation": "any",
+  "background_color": "#f2efe6",
+  "theme_color": "#173f32",
+  "icons": [
+    {"src":"./favicon.svg","sizes":"any","type":"image/svg+xml","purpose":"any maskable"}
+  ]
+}
