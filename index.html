@@ -1,0 +1,156 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#173f32">
+  <meta name="description" content="Maktabah Hikmah — perpustakaan Islam pribadi untuk membaca tafsir, doa, kisah, dan sejarah Al-Qur'an di iPad.">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Maktabah">
+  <link rel="manifest" href="./manifest.webmanifest">
+  <link rel="apple-touch-icon" href="./apple-touch-icon.png">
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./assets/app.css">
+  <title>Maktabah Hikmah</title>
+</head>
+<body>
+  <main class="shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark" aria-hidden="true">م</div>
+        <div>
+          <h1>Maktabah Hikmah</h1>
+          <p>Tafsir, doa, dan khazanah Islam</p>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="icon-btn" id="importTopBtn" aria-label="Impor PDF" title="Impor PDF">＋</button>
+        <button class="icon-btn" id="themeBtn" aria-label="Ganti tema" title="Ganti tema">◐</button>
+        <button class="icon-btn" id="infoBtn" aria-label="Petunjuk" title="Petunjuk">?</button>
+      </div>
+    </header>
+
+    <section class="hero">
+      <div class="hero-copy">
+        <small>Perpustakaan pribadi</small>
+        <h2>Buku tersimpan di iPad, bukan di internet.</h2>
+        <p>Impor PDF dari aplikasi Files satu kali. Maktabah Hikmah menyimpannya secara lokal agar dapat dibaca sebagai PWA tanpa mengunggah buku ke repositori publik.</p>
+        <div class="hero-actions">
+          <button class="hero-primary" id="importHeroBtn">Impor koleksi PDF</button>
+          <button class="hero-secondary" id="installHelpBtn">Pasang di Home Screen</button>
+        </div>
+      </div>
+      <button class="continue-card" id="continueCard" type="button" aria-label="Lanjutkan membaca">
+        <span class="continue-glyph" id="continueGlyph">١</span>
+        <span>
+          <strong id="continueTitle">Lanjutkan membaca</strong>
+          <span id="continueMeta"></span>
+        </span>
+      </button>
+    </section>
+
+    <section class="status-strip" aria-label="Status koleksi">
+      <div><strong id="storedCount">0</strong><span>PDF tersimpan</span></div>
+      <div><strong id="totalSize">0 MB</strong><span>penyimpanan lokal</span></div>
+      <button id="manageBtn">Kelola koleksi</button>
+    </section>
+
+    <section class="toolbar" aria-label="Pencarian dan penyaring">
+      <div class="search-wrap">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><circle cx="11" cy="11" r="7"></circle><path d="m20 20-3.5-3.5"></path></svg>
+        <input class="search" id="searchInput" type="search" placeholder="Cari judul, jilid, doa, atau sejarah…" autocomplete="off">
+      </div>
+      <div class="filter-row" id="filters">
+        <button class="chip active" data-filter="all">Semua</button>
+        <button class="chip" data-filter="tafsir">Tafsir</button>
+        <button class="chip" data-filter="bacaan">Doa & kisah</button>
+        <button class="chip" data-filter="stored">Tersimpan</button>
+        <button class="chip" data-filter="favorite">Favorit</button>
+      </div>
+    </section>
+
+    <div class="section-head">
+      <div>
+        <h3>Koleksi buku</h3>
+        <p>PDF berukuran besar disimpan di perangkat melalui IndexedDB.</p>
+      </div>
+      <div class="count" id="bookCount"></div>
+    </div>
+
+    <section class="grid" id="bookGrid" aria-live="polite"></section>
+    <div class="empty" id="emptyState">Tidak ada buku yang cocok dengan pencarian.</div>
+
+    <footer class="footer">
+      <span>Maktabah Hikmah</span>
+      <span>Data bacaan tetap lokal di perangkat.</span>
+    </footer>
+  </main>
+
+  <input id="fileInput" type="file" accept="application/pdf,.pdf" multiple hidden>
+  <input id="replaceInput" type="file" accept="application/pdf,.pdf" hidden>
+
+  <section class="reader" id="reader" aria-label="Pembaca PDF">
+    <header class="reader-bar">
+      <button class="icon-btn" id="closeReader" aria-label="Kembali">←</button>
+      <div class="reader-title">
+        <strong id="readerTitle"></strong>
+        <span id="readerSubtitle"></span>
+      </div>
+      <div class="page-control">
+        <span>Hal.</span>
+        <input id="pageInput" type="number" min="1" inputmode="numeric" aria-label="Nomor halaman terakhir">
+        <button class="icon-btn" id="savePage" aria-label="Simpan halaman" title="Simpan halaman">✓</button>
+      </div>
+      <button class="icon-btn" id="openPdf" aria-label="Buka PDF penuh" title="Buka PDF penuh">↗</button>
+    </header>
+    <div class="reader-body">
+      <iframe id="pdfFrame" title="Dokumen PDF"></iframe>
+      <div class="reader-hint" id="readerHint">
+        <span>Masukkan halaman terakhir di atas sebelum keluar.</span>
+        <button class="ghost" id="hideHint" aria-label="Tutup petunjuk">✕</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="infoSheet" aria-label="Petunjuk penggunaan">
+    <div class="sheet-card">
+      <div class="sheet-grabber"></div>
+      <h3>Pasang di iPad</h3>
+      <ol>
+        <li>Buka situs ini menggunakan <strong>Safari</strong>.</li>
+        <li>Tekan tombol <strong>Share</strong>, lalu pilih <strong>Add to Home Screen</strong>.</li>
+        <li>Buka ikon <strong>Maktabah</strong> dari Home Screen.</li>
+        <li>Tekan <strong>Impor koleksi PDF</strong>, lalu pilih semua PDF dari aplikasi Files.</li>
+      </ol>
+      <p>PDF disimpan di penyimpanan situs pada iPad dan tidak dikirim ke server. iOS dapat menghapus data situs ketika penyimpanan sangat penuh, jadi simpan file asli di aplikasi Files sebagai cadangan.</p>
+      <button class="primary full" data-close-sheet="infoSheet">Mengerti</button>
+    </div>
+  </section>
+
+  <section class="sheet" id="manageSheet" aria-label="Kelola koleksi">
+    <div class="sheet-card wide-sheet">
+      <div class="sheet-grabber"></div>
+      <h3>Kelola koleksi lokal</h3>
+      <p class="sheet-intro">Ganti atau hapus PDF yang tersimpan di perangkat ini.</p>
+      <div id="manageList" class="manage-list"></div>
+      <div class="sheet-actions">
+        <button class="secondary" id="manageImportBtn">Impor PDF</button>
+        <button class="primary" data-close-sheet="manageSheet">Selesai</button>
+      </div>
+    </div>
+  </section>
+
+  <section class="sheet" id="importSheet" aria-label="Hasil impor">
+    <div class="sheet-card">
+      <div class="sheet-grabber"></div>
+      <h3>Hasil impor</h3>
+      <div id="importSummary" class="import-summary"></div>
+      <button class="primary full" data-close-sheet="importSheet">Selesai</button>
+    </div>
+  </section>
+
+  <div class="toast" id="toast" role="status"></div>
+  <script src="./assets/app.js" defer></script>
+</body>
+</html>
